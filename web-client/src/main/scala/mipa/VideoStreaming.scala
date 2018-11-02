@@ -43,7 +43,15 @@ object VideoStreaming extends Behaviour {
           onEvent("change", (e: dom.Event) => SetDuration(e.target.asInstanceOf[HTMLInputElement].value.toInt /* TODO error handling */))
         )
       ),
-      text(s" minutes ${model.frequency} times a week.")
+      text(" minutes "),
+      div(attr("class", "input-field inline"))(
+        input(
+          attr("type", "number"),
+          attr("value", model.frequency.toString),
+          onEvent("change", (e: dom.Event) => SetFrequency(e.target.asInstanceOf[HTMLInputElement].value.toInt /* TODO validation */))
+        ),
+      ),
+      text(s" times a week.")
     )
 
 }
