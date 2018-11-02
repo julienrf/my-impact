@@ -12,6 +12,7 @@ object Ui extends scalm.App {
 
   sealed trait Msg
   case class Select(behaviour: BehaviourAndModel) extends Msg
+  case object Close extends Msg
   trait BehaviourMsg extends Msg {
     val behaviour: Behaviour
     def msg: behaviour.Msg
@@ -36,12 +37,46 @@ object Ui extends scalm.App {
 
   def view(model: Model): Html[Msg] =
     tag("body")()(
-      h1()(text("My Impact")),
-      Charts.echartsElem(model.behaviours)(Select),
-      model.selected match {
-        case None => Elem.Empty
-        case Some(behaviour) => behaviour.behaviour.form(behaviour.model).map(BehaviourMsg(behaviour.behaviour))
-      }
+      tag("nav")()(
+        div(attr("class", "container"))(
+          div(attr("class", "brand-logo"))(text("My Impact"))
+        )
+      ),
+      tag("main")(attr("class", "container"))(
+        div(attr("class", "row"))(
+          div(attr("class", "col s12"))(
+            Charts.echartsElem(model.behaviours)(Select)
+          )
+        ),
+        model.selected match {
+          case None => Elem.Empty
+          case Some(behaviour) =>
+            div(attr("class", "row"))(
+              div(attr("class", "col s12"))(
+                div(attr("class", "card"))(
+                  div(attr("class", "card-content"))(
+                    behaviour.behaviour.view(behaviour.model).map(BehaviourMsg(behaviour.behaviour))
+                  ),
+                  div(attr("class", "ard-action"))(
+                    tag("a")(
+                      attr("class", "waves-effect waves-teal btn-flat"),
+                      onClick(Close)
+                    )(text("Close"))
+                  )
+                )
+              )
+            )
+        }
+      ),
+      tag("footer")(attr("class", "page-footer"))(
+        div(attr("class", "footer-copyright"))(
+          div(attr("class", "container"))(
+            div(attr("class", "row"))(
+              text("© 2018 Julien Richard-Foy")
+            )
+          )
+        )
+      )
     )
 
   def update(msg: Msg, model: Model): (Model, Cmd[Msg]) = msg match {
@@ -56,6 +91,7 @@ object Ui extends scalm.App {
           ), Cmd.Empty)
         case _ => (model, Cmd.Empty)
       }
+    case Close => (model.copy(selected = None), Cmd.Empty)
   }
 
   def subscriptions(model: Model): Sub[Msg] = Sub.Empty

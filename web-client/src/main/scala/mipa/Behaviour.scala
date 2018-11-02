@@ -8,7 +8,7 @@ trait Behaviour {
   type Msg
   def update(model: Model, msg: Msg): Model
   def init: Model
-  def form(model: Model): Html[Msg]
+  def view(model: Model): Html[Msg]
 
   def label(model: Model): String
   def footprint(model: Model): Double

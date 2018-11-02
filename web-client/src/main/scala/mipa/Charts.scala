@@ -31,7 +31,8 @@ object Charts {
           series = js.Array(new SeriesOpt(
             `type` = "bar",
             data = js.Array(behaviours.map(_.footprint: js.Any): _*)
-          ))
+          )),
+          color = js.Array("#ee6e73")
         )
       chart.setOption(option)
       maybeChart = Some(chart)

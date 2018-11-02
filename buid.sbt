@@ -25,9 +25,18 @@ val client =
         "org.julienrf" %%% "scalm" % "1.0.0-RC1+7-ff1789ba+20181028-2149",
         "org.julienrf" %%% "endpoints-xhr-client-faithful" % endpointsVersion
       ),
-      npmDependencies in Compile += "echarts" -> "4.1.0",
-      scalacOptions += "-P:scalajs:sjsDefinedByDefault",
-      WebKeys.exportedMappings in Assets := Seq() // https://github.com/playframework/playframework/issues/5242
+      version in webpack := "4.23.1",
+      npmDependencies in Compile ++= Seq(
+        "echarts" -> "4.1.0",
+        "materialize-css" -> "1.0.0"
+      ),
+      npmDevDependencies in Compile ++= Seq(
+        "css-loader" -> "1.0.1",
+        "style-loader" -> "0.23.1"
+      ),
+      webpackConfigFile := Some((baseDirectory in ThisBuild).value / "webpack.config.js"),
+      webpackBundlingMode := BundlingMode.LibraryOnly(),
+      scalacOptions += "-P:scalajs:sjsDefinedByDefault"
     )
     .dependsOn(shared.js)
 
@@ -36,6 +45,7 @@ val server =
     .enablePlugins(WebScalaJSBundlerPlugin)
     .settings(
       WebKeys.packagePrefix in Assets := "public/",
+      WebKeys.exportedMappings in Assets := Seq(), // https://github.com/playframework/playframework/issues/5242
       (managedClasspath in Runtime) += (packageBin in Assets).value,
       scalaJSProjects := Seq(client),
       pipelineStages in Assets := Seq(scalaJSPipeline),

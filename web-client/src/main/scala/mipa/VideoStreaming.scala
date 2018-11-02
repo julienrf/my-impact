@@ -25,7 +25,7 @@ object VideoStreaming extends Behaviour {
   case class SetDuration(n: Int) extends Msg
   case class SetFrequency(n: Int) extends Msg
 
-  def init: Model = Model(10.minutes, 1)
+  def init: Model = Model(20.minutes, 5)
 
   def update(model: Model, msg: Msg): Model =
     msg match {
@@ -33,13 +33,15 @@ object VideoStreaming extends Behaviour {
       case SetFrequency(n) => model.copy(frequency = n)
     }
 
-  def form(model: Model): Html[Msg] =
+  def view(model: Model): Html[Msg] =
     div()(
-      text("I watch a video of "),
-      input(
-        attr("type", "number"),
-        attr("value", model.duration.toMinutes.toString),
-        onEvent("change", (e: dom.Event) => SetDuration(e.target.asInstanceOf[HTMLInputElement].value.toInt /* TODO error handling */))
+      text("Watching a video of "),
+      div(attr("class", "input-field inline"))(
+        input(
+          attr("type", "number"),
+          attr("value", model.duration.toMinutes.toString),
+          onEvent("change", (e: dom.Event) => SetDuration(e.target.asInstanceOf[HTMLInputElement].value.toInt /* TODO error handling */))
+        )
       ),
       text(s" minutes ${model.frequency} times a week.")
     )

@@ -19,7 +19,7 @@ object Flying extends Behaviour {
   def update(model: Model, msg: Msg): Model = model
 
 
-  def form(model: Model): Html[Nothing] =
+  def view(model: Model): Html[Nothing] =
     div()(text("I take a flight of 200 km once a year."))
 
 }

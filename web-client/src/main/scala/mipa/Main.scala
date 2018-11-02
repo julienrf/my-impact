@@ -5,6 +5,9 @@ import scalm._
 
 object Main {
 
+  materializecss.CSS
+  materializecss.JS
+
   def main(args: Array[String]): Unit = {
     Scalm.start(Ui, document.body)
     ()

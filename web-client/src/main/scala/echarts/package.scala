@@ -36,7 +36,8 @@ class OptionOpts(
   val title: UndefOr[TitleOpts] = js.undefined,
   val xAxis: UndefOr[AxisOpts] = js.undefined,
   val yAxis: UndefOr[AxisOpts] = js.undefined,
-  val series: UndefOr[js.Array[SeriesOpt]] = js.undefined
+  val series: UndefOr[js.Array[SeriesOpt]] = js.undefined,
+  val color: UndefOr[js.Array[String]] = js.undefined
 ) extends js.Object
 
 class TitleOpts(val text: UndefOr[String] = js.undefined) extends js.Object
