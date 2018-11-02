@@ -7,3 +7,7 @@ addSbtPlugin("ch.epfl.scala" % "sbt-web-scalajs-bundler" % "0.13.1")
 addSbtPlugin("io.spray" % "sbt-revolver" % "0.9.1")
 
 libraryDependencies += "commons-codec" % "commons-codec" % "1.10"
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.3.12")
+
+addSbtPlugin("com.heroku" % "sbt-heroku" % "2.1.2")

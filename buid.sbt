@@ -31,10 +31,12 @@ val client =
         "materialize-css" -> "1.0.0"
       ),
       npmDevDependencies in Compile ++= Seq(
+        "webpack-merge" -> "4.1.4",
         "css-loader" -> "1.0.1",
         "style-loader" -> "0.23.1"
       ),
-      webpackConfigFile := Some((baseDirectory in ThisBuild).value / "webpack.config.js"),
+      webpackConfigFile in fastOptJS := Some(baseDirectory.value / "dev.webpack.config.js"),
+      webpackConfigFile in fullOptJS := Some(baseDirectory.value / "prod.webpack.config.js"),
       webpackBundlingMode := BundlingMode.LibraryOnly(),
       scalacOptions += "-P:scalajs:sjsDefinedByDefault"
     )
@@ -42,7 +44,7 @@ val client =
 
 val server =
   project.in(file("web-server"))
-    .enablePlugins(WebScalaJSBundlerPlugin)
+    .enablePlugins(WebScalaJSBundlerPlugin, JavaServerAppPackaging)
     .settings(
       WebKeys.packagePrefix in Assets := "public/",
       WebKeys.exportedMappings in Assets := Seq(), // https://github.com/playframework/playframework/issues/5242
@@ -61,6 +63,7 @@ val server =
           generatedPackage = Some("mipa"),
           assetsPath = identity
         )
-      }.taskValue
+      }.taskValue,
+      herokuAppName in Compile := "my-impact"
     )
     .dependsOn(shared.jvm)
