@@ -8,18 +8,21 @@ import scalm.Html._
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.duration.DurationInt
 
-// https://theshiftproject.org/wp-content/uploads/2018/10/2018-10-04_Rapport_Pour-une-sobri%C3%A9t%C3%A9-num%C3%A9rique_Rapport_The-Shift-Project.pdf
 object VideoStreaming extends Behaviour {
+
+  val sourceURL = "https://theshiftproject.org/wp-content/uploads/2018/10/2018-10-04_Rapport_Pour-une-sobri%C3%A9t%C3%A9-num%C3%A9rique_Rapport_The-Shift-Project.pdf"
+  val sourceLabel = "Rapport pour une sobriété numérique, The Shift Project"
 
   case class Model(
     duration: FiniteDuration,
     frequency: Int // Times per week
-  )
+  ) extends ModelTemplate {
 
-  def label(model: Model): String = "video"
+    val label: String = "video"
 
-  def footprint(model: Model): Double =
-    model.duration.toMinutes * 9e-3 * 0.276 * (model.frequency * 52)
+    val footprint: Double =
+      duration.toMinutes * 9e-3 * 0.276 * (frequency * 52)
+  }
 
   sealed trait Msg
   case class SetDuration(n: Int) extends Msg
@@ -35,7 +38,7 @@ object VideoStreaming extends Behaviour {
 
   def view(model: Model): Html[Msg] =
     div()(
-      text("Watching a video of "),
+      text("Watching an online video of "),
       div(attr("class", "input-field inline"))(
         input(
           attr("type", "number"),
@@ -43,7 +46,7 @@ object VideoStreaming extends Behaviour {
           onEvent("change", (e: dom.Event) => SetDuration(e.target.asInstanceOf[HTMLInputElement].value.toInt /* TODO error handling */))
         )
       ),
-      text(" minutes "),
+      text(" minutes, in high definition, "),
       div(attr("class", "input-field inline"))(
         input(
           attr("type", "number"),

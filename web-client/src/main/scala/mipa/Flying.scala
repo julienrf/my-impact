@@ -5,17 +5,21 @@ import org.scalajs.dom.raw.HTMLInputElement
 import scalm.Html
 import scalm.Html._
 
-// https://en.wikipedia.org/wiki/Environmental_impact_of_aviation
 object Flying extends Behaviour {
+
+  val sourceURL = "https://en.wikipedia.org/wiki/Environmental_impact_of_aviation"
+  val sourceLabel = "Wikipedia"
 
   case class Model(
     distance: Int /* km */,
     frequency: Int /* per year */
-  )
+  ) extends ModelTemplate {
 
-  def label(model: Model): String = "flight"
-  def footprint(model: Model): Double =
-    model.frequency * 259 * model.distance / 1000.0
+    val label: String = "flight"
+
+    val footprint: Double =
+      frequency * 259 * distance / 1000.0
+  }
 
   sealed trait Msg
   case class SetDistance(n: Int) extends Msg
@@ -38,7 +42,7 @@ object Flying extends Behaviour {
           onEvent("change", (e: dom.Event) => SetDistance(e.target.asInstanceOf[HTMLInputElement].value.toInt))
         )
       ),
-      text(" km "),
+      text(" km, "),
       div(attr("class", "input-field inline"))(
         input(
           attr("type", "number"),

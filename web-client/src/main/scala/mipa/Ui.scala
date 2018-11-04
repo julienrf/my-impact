@@ -13,17 +13,7 @@ object Ui extends scalm.App {
   sealed trait Msg
   case class Select(behaviour: BehaviourAndModel) extends Msg
   case object Close extends Msg
-  trait BehaviourMsg extends Msg {
-    val behaviour: Behaviour
-    def msg: behaviour.Msg
-  }
-  object BehaviourMsg {
-    def apply(_behaviour: Behaviour): _behaviour.Msg => BehaviourMsg { val behaviour: _behaviour.type } = _msg =>
-      new BehaviourMsg {
-        val behaviour: _behaviour.type = _behaviour
-        def msg = _msg
-      }
-  }
+  case class BehaviourMsg(inner: BehaviourAndMsg) extends Msg
 
   def init: (Model, Cmd[Msg]) = {
     val model = Model(
@@ -55,7 +45,15 @@ object Ui extends scalm.App {
               div(attr("class", "col s12"))(
                 div(attr("class", "card"))(
                   div(attr("class", "card-content"))(
-                    behaviour.behaviour.view(behaviour.model).map(BehaviourMsg(behaviour.behaviour))
+                    tag("p")()(
+                      behaviour.view.map(BehaviourMsg)
+                    ),
+                    tag("p")()(
+                      text("Source: "),
+                      tag("a")(
+                        attr("href", behaviour.sourceURL)
+                      )(text(behaviour.sourceLabel))
+                    )
                   ),
                   div(attr("class", "ard-action"))(
                     tag("a")(
@@ -81,13 +79,13 @@ object Ui extends scalm.App {
 
   def update(msg: Msg, model: Model): (Model, Cmd[Msg]) = msg match {
     case Select(behaviour) => (model.copy(selected = Some(behaviour)), Cmd.Empty)
-    case m: BehaviourMsg =>
+    case BehaviourMsg(inner) =>
       model.selected match {
-        case Some(b) if b.behaviour eq m.behaviour =>
-          val updated = BehaviourAndModel(m.behaviour)(m.behaviour.update(b.model.asInstanceOf[m.behaviour.Model], m.msg))
+        case Some(inner((behaviour, innerMsg))) =>
+          val updated = behaviour.update(innerMsg)
           (model.copy(
-            behaviours = model.behaviours.map(bm => if (bm.behaviour eq m.behaviour) updated else bm),
-            selected = Some(b)
+            behaviours = model.behaviours.map(bm => if (bm.behaviour == behaviour.behaviour /* Will not work if the same behaviour is compared several times */) updated else bm),
+            selected = Some(behaviour)
           ), Cmd.Empty)
         case _ => (model, Cmd.Empty)
       }

@@ -53,6 +53,7 @@ class SeriesOpt(
   val data: js.Array[js.Any]
 ) extends js.Object
 
+@js.native
 trait MouseEvent extends js.Object {
-  def dataIndex: Int
+  def dataIndex: Int = js.native
 }
