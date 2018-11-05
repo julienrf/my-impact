@@ -17,8 +17,8 @@ object Ui extends scalm.App {
 
   def init: (Model, Cmd[Msg]) = {
     val model = Model(
-      BehaviourAndModel(VideoStreaming)(VideoStreaming.init) ::
-      BehaviourAndModel(Flying)(Flying.init) ::
+      BehaviourAndModel.init(VideoStreaming) ::
+      BehaviourAndModel.init(Flying) ::
       Nil,
       None
     )

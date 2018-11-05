@@ -38,6 +38,7 @@ val client =
       webpackConfigFile in fastOptJS := Some(baseDirectory.value / "dev.webpack.config.js"),
       webpackConfigFile in fullOptJS := Some(baseDirectory.value / "prod.webpack.config.js"),
       webpackBundlingMode := BundlingMode.LibraryOnly(),
+      useYarn := true,
       scalacOptions += "-P:scalajs:sjsDefinedByDefault"
     )
     .dependsOn(shared.js)

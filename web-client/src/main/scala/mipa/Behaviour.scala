@@ -41,12 +41,16 @@ trait BehaviourAndModel { outer =>
 }
 
 object BehaviourAndModel {
-  def apply(_behaviour: Behaviour): _behaviour.Model => BehaviourAndModel { val behaviour: _behaviour.type } =
-    _model =>
+  def apply(_behaviour: Behaviour)(_model: _behaviour.Model): BehaviourAndModel { val behaviour: _behaviour.type } = {
       new BehaviourAndModel {
         val behaviour: _behaviour.type = _behaviour
         def model = _model
       }
+    }
+
+  def init(_behaviour: Behaviour): BehaviourAndModel { val behaviour: _behaviour.type } = {
+    BehaviourAndModel(_behaviour)(_behaviour.init)
+  }
 }
 
 trait BehaviourAndMsg { outer =>

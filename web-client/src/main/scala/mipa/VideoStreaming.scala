@@ -13,6 +13,7 @@ object VideoStreaming extends Behaviour {
   val sourceURL = "https://theshiftproject.org/wp-content/uploads/2018/10/2018-10-04_Rapport_Pour-une-sobri%C3%A9t%C3%A9-num%C3%A9rique_Rapport_The-Shift-Project.pdf"
   val sourceLabel = "Rapport pour une sobriété numérique, The Shift Project"
 
+  // TODO video quality, device type, connection type
   case class Model(
     duration: FiniteDuration,
     frequency: Int // Times per week
