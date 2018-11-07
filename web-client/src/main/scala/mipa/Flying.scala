@@ -26,9 +26,9 @@ object Flying extends Behaviour {
   def view(model: Model): Html[Modify] =
     div()(
       text("Flying for "),
-      numberField(model.distance.toString)(modifyNumber(n => _.copy(distance = n))),
+      numberField(model.distance.toString)(n => _.copy(distance = n)),
       text(" km, "),
-      numberField(model.frequency.toString)(modifyNumber(n => _.copy(frequency = n))),
+      numberField(model.frequency.toString)(n => _.copy(frequency = n)),
       text(" times per year.")
     )
 

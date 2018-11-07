@@ -13,33 +13,33 @@ trait Behaviour {
 
   type Model <: ModelTemplate
 
+  trait ModelTemplate {
+    def label: String
+    def footprint: Double
+  }
+
   final case class Modify(f: Model => Model)
 
   def init: Model
 
   def view(model: Model): Html[Modify]
 
-  final def update(model: Model, modify: Modify): Model =
-    modify.f(model)
-
-  trait ModelTemplate {
-    def label: String
-    def footprint: Double
+  trait Field {
+    def form: Html[Modify]
   }
 
-  final def numberField(value: String)(onChange: String => Modify): Html[Modify] =
+  final def numberField(value: String)(f: Int => Model => Model): Html[Modify] =
     div(attr("class", "input-field inline"))(
       input(
         attr("type", "number"),
         attr("value", value),
-        onEvent("change", (e: dom.Event) => onChange(e.target.asInstanceOf[HTMLInputElement].value))
+        onEvent("change", { (e: dom.Event) =>
+          val stringValue = e.target.asInstanceOf[HTMLInputElement].value
+          if (stringValue.forall(_.isDigit)) Modify(f(stringValue.toInt))
+          else Modify(identity)
+        })
       )
     )
-
-  final def modifyNumber(f: Int => Model => Model): String => Modify = { stringValue =>
-    if (stringValue.forall(_.isDigit)) Modify(f(stringValue.toInt))
-    else Modify(identity)
-  }
 
 }
 
@@ -55,7 +55,7 @@ trait BehaviourAndModel { outer =>
   final def source: behaviour.Source = behaviour.source
 
   final def update(msg: BehaviourAndMsg { val behaviour: outer.behaviour.type }): BehaviourAndModel { val behaviour: outer.behaviour.type } =
-    BehaviourAndModel(behaviour)(behaviour.update(model, msg.msg))
+    BehaviourAndModel(behaviour)(msg.modify.f(model))
 
   final def view: Html[BehaviourAndMsg { val behaviour: outer.behaviour.type }] =
     behaviour.view(model).map(BehaviourAndMsg(behaviour))
@@ -79,7 +79,7 @@ trait BehaviourAndMsg { outer =>
 
   val behaviour: Behaviour
 
-  def msg: behaviour.Modify
+  def modify: behaviour.Modify
 
   def unapply(bam: BehaviourAndModel): Option[(BehaviourAndModel { val behaviour: bam.behaviour.type }, BehaviourAndMsg { val behaviour: bam.behaviour.type })] =
     if (bam.behaviour == this.behaviour) Some((bam.asInstanceOf[BehaviourAndModel { val behaviour: bam.behaviour.type }], this.asInstanceOf[BehaviourAndMsg { val behaviour: bam.behaviour.type }]))
@@ -88,9 +88,9 @@ trait BehaviourAndMsg { outer =>
 }
 
 object BehaviourAndMsg {
-  def apply(_behaviour: Behaviour)(_msg: _behaviour.Modify): BehaviourAndMsg { val behaviour: _behaviour.type } =
+  def apply(_behaviour: Behaviour)(_modify: _behaviour.Modify): BehaviourAndMsg { val behaviour: _behaviour.type } =
     new BehaviourAndMsg {
       val behaviour: _behaviour.type = _behaviour
-      def msg = _msg
+      def modify = _modify
     }
 }

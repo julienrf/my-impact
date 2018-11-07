@@ -30,9 +30,9 @@ object VideoStreaming extends Behaviour {
   def view(model: Model): Html[Modify] =
     div()(
       text("Watching an online video of "),
-      numberField(model.duration.toMinutes.toString)(modifyNumber(n => _.copy(duration = n.minutes))),
+      numberField(model.duration.toMinutes.toString)(n => _.copy(duration = n.minutes)),
       text(" minutes, in high definition, "),
-      numberField(model.frequency.toString)(modifyNumber(n => _.copy(frequency = n))),
+      numberField(model.frequency.toString)(n => _.copy(frequency = n)),
       text(s" times a week.")
     )
 
