@@ -1,7 +1,5 @@
 package mipa
 
-import org.scalajs.dom
-import org.scalajs.dom.raw.HTMLInputElement
 import scalm.Html
 import scalm.Html._
 
@@ -25,36 +23,14 @@ object VideoStreaming extends Behaviour {
       duration.toMinutes * 9e-3 * 0.276 * (frequency * 52)
   }
 
-  sealed trait Msg
-  case class SetDuration(n: Int) extends Msg
-  case class SetFrequency(n: Int) extends Msg
-
   def init: Model = Model(20.minutes, 5)
 
-  def update(model: Model, msg: Msg): Model =
-    msg match {
-      case SetDuration(n) => model.copy(duration = n.minutes)
-      case SetFrequency(n) => model.copy(frequency = n)
-    }
-
-  def view(model: Model): Html[Msg] =
+  def view(model: Model): Html[Modify] =
     div()(
       text("Watching an online video of "),
-      div(attr("class", "input-field inline"))(
-        input(
-          attr("type", "number"),
-          attr("value", model.duration.toMinutes.toString),
-          onEvent("change", (e: dom.Event) => SetDuration(e.target.asInstanceOf[HTMLInputElement].value.toInt /* TODO error handling */))
-        )
-      ),
+      numberField(model.duration.toMinutes.toString)(modifyNumber(n => _.copy(duration = n.minutes))),
       text(" minutes, in high definition, "),
-      div(attr("class", "input-field inline"))(
-        input(
-          attr("type", "number"),
-          attr("value", model.frequency.toString),
-          onEvent("change", (e: dom.Event) => SetFrequency(e.target.asInstanceOf[HTMLInputElement].value.toInt /* TODO validation */))
-        ),
-      ),
+      numberField(model.frequency.toString)(modifyNumber(n => _.copy(frequency = n))),
       text(s" times a week.")
     )
 
