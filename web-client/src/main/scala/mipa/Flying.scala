@@ -5,8 +5,10 @@ import scalm.Html._
 
 object Flying extends Behaviour {
 
-  val sourceURL = "https://en.wikipedia.org/wiki/Environmental_impact_of_aviation"
-  val sourceLabel = "Wikipedia"
+  val source = Source(
+    "https://en.wikipedia.org/wiki/Environmental_impact_of_aviation",
+    "Wikipedia"
+  )
 
   case class Model(
     distance: Int /* km */,

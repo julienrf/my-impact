@@ -51,8 +51,8 @@ object Ui extends scalm.App {
                     tag("p")()(
                       text("Source: "),
                       tag("a")(
-                        attr("href", behaviour.sourceURL)
-                      )(text(behaviour.sourceLabel))
+                        attr("href", behaviour.source.url)
+                      )(text(behaviour.source.label))
                     )
                   ),
                   div(attr("class", "ard-action"))(

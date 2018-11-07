@@ -7,6 +7,10 @@ import scalm.Html._
 
 trait Behaviour {
 
+  case class Source(url: String, label: String)
+
+  def source: Source
+
   type Model <: ModelTemplate
 
   final case class Modify(f: Model => Model)
@@ -18,18 +22,10 @@ trait Behaviour {
   final def update(model: Model, modify: Modify): Model =
     modify.f(model)
 
-  final def modifyNumber(f: Int => Model => Model): String => Modify = { stringValue =>
-    if (stringValue.forall(_.isDigit)) Modify(f(stringValue.toInt))
-    else Modify(identity)
-  }
-
   trait ModelTemplate {
     def label: String
     def footprint: Double
   }
-
-  def sourceURL: String
-  def sourceLabel: String
 
   final def numberField(value: String)(onChange: String => Modify): Html[Modify] =
     div(attr("class", "input-field inline"))(
@@ -39,6 +35,12 @@ trait Behaviour {
         onEvent("change", (e: dom.Event) => onChange(e.target.asInstanceOf[HTMLInputElement].value))
       )
     )
+
+  final def modifyNumber(f: Int => Model => Model): String => Modify = { stringValue =>
+    if (stringValue.forall(_.isDigit)) Modify(f(stringValue.toInt))
+    else Modify(identity)
+  }
+
 }
 
 trait BehaviourAndModel { outer =>
@@ -47,11 +49,10 @@ trait BehaviourAndModel { outer =>
 
   def model: behaviour.Model
 
-  final def label = model.label
-  final def footprint = model.footprint
+  final def label: String = model.label
+  final def footprint: Double = model.footprint
 
-  final def sourceURL = behaviour.sourceURL
-  final def sourceLabel = behaviour.sourceLabel
+  final def source: behaviour.Source = behaviour.source
 
   final def update(msg: BehaviourAndMsg { val behaviour: outer.behaviour.type }): BehaviourAndModel { val behaviour: outer.behaviour.type } =
     BehaviourAndModel(behaviour)(behaviour.update(model, msg.msg))
