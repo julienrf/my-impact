@@ -6,9 +6,9 @@ var commonConfig = require("./common.webpack.config.js");
 var UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = merge(generatedConfig, commonConfig, {
-  plugins: [
-    new UglifyJsPlugin({
+  optimization: {
+    minimizer: [new UglifyJsPlugin({
       sourceMap: false
-    })
-  ]
+    })]
+  }
 });

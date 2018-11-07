@@ -20,6 +20,8 @@ val client =
     .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin, ScalaJSWeb)
     .settings(
       scalaJSUseMainModuleInitializer := true,
+      // Temporary
+      scalaJSLinkerConfig in (Compile, fullOptJS) ~= { _.withClosureCompiler(false) },
       emitSourceMaps := false,
       libraryDependencies ++= Seq(
         "org.julienrf" %%% "scalm" % "1.0.0-RC1+7-ff1789ba+20181028-2149",
@@ -38,7 +40,6 @@ val client =
       webpackConfigFile in fastOptJS := Some(baseDirectory.value / "dev.webpack.config.js"),
       webpackConfigFile in fullOptJS := Some(baseDirectory.value / "prod.webpack.config.js"),
       webpackBundlingMode := BundlingMode.LibraryOnly(),
-      useYarn := true,
       scalacOptions += "-P:scalajs:sjsDefinedByDefault"
     )
     .dependsOn(shared.js)
@@ -52,6 +53,7 @@ val server =
       (managedClasspath in Runtime) += (packageBin in Assets).value,
       scalaJSProjects := Seq(client),
       pipelineStages in Assets := Seq(scalaJSPipeline),
+      pipelineStages := Seq(gzip),
       libraryDependencies ++= Seq(
         "org.julienrf" %% "endpoints-play-server" % endpointsVersion,
         "org.slf4j" % "slf4j-simple" % "1.7.25"
@@ -65,6 +67,10 @@ val server =
           assetsPath = identity
         )
       }.taskValue,
-      herokuAppName in Compile := "my-impact"
+      herokuAppName in Compile := "my-impact",
+      herokuSkipSubProjects in Compile := false,
+      herokuProcessTypes in Compile := Map(
+        "web" -> ("target/universal/stage/bin/" ++ name.value ++ " -Dhttp.port=$PORT") // TODO setup play.http.secret.key
+      )
     )
     .dependsOn(shared.jvm)

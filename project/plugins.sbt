@@ -11,3 +11,5 @@ libraryDependencies += "commons-codec" % "commons-codec" % "1.10"
 addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.3.12")
 
 addSbtPlugin("com.heroku" % "sbt-heroku" % "2.1.2")
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.2")
