@@ -85,7 +85,7 @@ object Ui extends scalm.App {
           val updated = behaviour.update(innerMsg)
           (model.copy(
             behaviours = model.behaviours.map(bm => if (bm.behaviour == behaviour.behaviour /* Will not work if the same behaviour is compared several times */) updated else bm),
-            selected = Some(behaviour)
+            selected = Some(updated)
           ), Cmd.Empty)
         case _ => (model, Cmd.Empty)
       }

@@ -25,7 +25,8 @@ val client =
       emitSourceMaps := false,
       libraryDependencies ++= Seq(
         "org.julienrf" %%% "scalm" % "1.0.0-RC1+7-ff1789ba+20181028-2149",
-        "org.julienrf" %%% "endpoints-xhr-client-faithful" % endpointsVersion
+        "org.julienrf" %%% "endpoints-xhr-client-faithful" % endpointsVersion,
+        "org.julienrf" %%% "enum" % "3.1"
       ),
       version in webpack := "4.23.1",
       npmDependencies in Compile ++= Seq(
