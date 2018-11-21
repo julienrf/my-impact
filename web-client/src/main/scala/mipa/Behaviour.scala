@@ -1,11 +1,9 @@
 package mipa
 
-import java.util.UUID
-
 import enum.Enum
 import org.scalajs.dom
 import org.scalajs.dom.raw.{HTMLInputElement, HTMLSelectElement}
-import scalm.Html
+import scalm.{Html, Style}
 import scalm.Html._
 
 trait Behaviour {
@@ -31,58 +29,38 @@ trait Behaviour {
     def form: Html[Modify]
   }
 
-  final def numberField(value: String)(f: Int => Model => Model): Html[Modify] =
-    div(attr("class", "input-field inline"))(
-      input(
-        attr("type", "number"),
-        attr("value", value),
-        onEvent("change", { e: dom.Event =>
-          val stringValue = e.target.asInstanceOf[HTMLInputElement].value
-          if (stringValue.forall(_.isDigit)) Modify(f(stringValue.toInt))
-          else Modify(identity)
-        })
-      )
+  final def numberField(value: String, maxWidth: Int = 3)(f: Int => Model => Model): Html[Modify] =
+    input(
+      attr("type", "number"),
+      attr("value", value),
+      style(Style("max-width", s"${maxWidth}rem")),
+      onEvent("change", { e: dom.Event =>
+        val stringValue = e.target.asInstanceOf[HTMLInputElement].value
+        if (stringValue.forall(_.isDigit)) Modify(f(stringValue.toInt))
+        else Modify(identity)
+      })
     )
 
   final def enumField[A](value: A)(f: A => Model => Model)(implicit enumeration: Enum[A]): Html[Modify] = {
-    val id = UUID.randomUUID().toString
-    span()(
+    tag("select")(
+      // Reset style applied by CSS framework
+      style(Style("display", "initial"), Style("width", "initial")),
+      onEvent("change", { e: dom.Event =>
+        enumeration
+          .decode(e.target.asInstanceOf[HTMLSelectElement].value)
+          .fold(_ => Modify(identity), value => Modify(f(value)))
+      })
+    )(
       enumeration.values.to[Seq].map { v =>
-        label()(
-          input(
-            attr("name", id),
-            attr("type", "radio"),
-            attr("value", enumeration.encode(v)),
-            cond(v == value)(attr("checked", "checked")),
-            onEvent("change", { e: dom.Event =>
-              enumeration
-                .decode(e.target.asInstanceOf[HTMLSelectElement].value)
-                .fold(_ => Modify(identity), value => Modify(f(value)))
-            })
-          ),
-          span()(text(enumeration.encode(v)))
+        val label = enumeration.encode(v)
+        tag("option")(
+          attr("value", label),
+          cond(v == value)(attr("selected", "selected"))
+        )(
+          text(label)
         )
       }: _*
     )
-//    div(attr("class", "input-field inline"))(
-//      tag("select")(
-//        onEvent("change", { e: dom.Event =>
-//          enumeration
-//            .decode(e.target.asInstanceOf[HTMLSelectElement].value)
-//            .fold(_ => Modify(identity), value => Modify(f(value)))
-//        })
-//      )(
-//        enumeration.values.to[Seq].map { v =>
-//          val label = enumeration.encode(v)
-//          tag("option")(
-//            attr("value", label),
-//            cond(v == value)(attr("selected", "selected"))
-//          )(
-//            text(label)
-//          )
-//        }: _*
-//      )
-//    )
   }
 
 }
