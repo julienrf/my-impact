@@ -1,5 +1,7 @@
 package mipa
 
+import org.scalajs.dom
+import org.scalajs.dom.raw.HTMLInputElement
 import scalm.Html
 import scalm.Html._
 
@@ -17,8 +19,8 @@ object Flying extends Behaviour {
 
     val label: String = "flight"
 
-    val footprint: Double =
-      frequency * 259 * distance / 1000.0
+    val footprint =
+      "Fuel consumption" -> (frequency * 259 * distance / 1000.0) :: Nil
   }
 
   def init = Model(200, 1)
@@ -26,7 +28,7 @@ object Flying extends Behaviour {
   def view(model: Model): Html[Modify] =
     div()(
       text("Flying for "),
-      numberField(model.distance.toString)(n => _.copy(distance = n)),
+      numberField(model.distance.toString, maxWidth = 5)(n => _.copy(distance = n)),
       text(" km, "),
       numberField(model.frequency.toString)(n => _.copy(frequency = n)),
       text(" times per year.")

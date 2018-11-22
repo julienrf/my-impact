@@ -16,7 +16,7 @@ trait Behaviour {
 
   trait ModelTemplate {
     def label: String
-    def footprint: Double
+    def footprint: List[(String, Double)]
   }
 
   final case class Modify(f: Model => Model)
@@ -33,7 +33,7 @@ trait Behaviour {
     input(
       attr("type", "number"),
       attr("value", value),
-      style(Style("max-width", s"${maxWidth}rem")),
+      style(Style("max-width", s"${maxWidth}rem"), Style("font-weight", "bold")),
       onEvent("change", { e: dom.Event =>
         val stringValue = e.target.asInstanceOf[HTMLInputElement].value
         if (stringValue.forall(_.isDigit)) Modify(f(stringValue.toInt))
@@ -44,7 +44,7 @@ trait Behaviour {
   final def enumField[A](value: A)(f: A => Model => Model)(implicit enumeration: Enum[A]): Html[Modify] = {
     tag("select")(
       // Reset style applied by CSS framework
-      style(Style("display", "initial"), Style("width", "initial")),
+      style(Style("display", "initial"), Style("width", "initial"), Style("font-weight", "bold")),
       onEvent("change", { e: dom.Event =>
         enumeration
           .decode(e.target.asInstanceOf[HTMLSelectElement].value)
@@ -72,7 +72,7 @@ trait BehaviourAndModel { outer =>
   def model: behaviour.Model
 
   final def label: String = model.label
-  final def footprint: Double = model.footprint
+  final def footprint = model.footprint
 
   final def source: behaviour.Source = behaviour.source
 

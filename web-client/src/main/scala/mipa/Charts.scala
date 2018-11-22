@@ -25,12 +25,26 @@ object Charts {
         new OptionOpts(
           title = new TitleOpts(),
           xAxis = new AxisOpts(data = js.Array(behaviours.map(_.label: js.Any): _*)),
-          yAxis = new AxisOpts(name = "kgCO₂e"),
-          series = js.Array(new SeriesOpt(
-            `type` = "bar",
-            data = js.Array(behaviours.map(_.footprint: js.Any): _*)
-          )),
-          color = js.Array("#ee6e73")
+          yAxis = new AxisOpts(name = "kgCO₂e / year"),
+          tooltip = new TooltipOpts(),
+          series = js.Array(
+            behaviours.flatMap { behaviour =>
+              behaviour.footprint.map { case (label, footprint) =>
+                new SeriesOpt(
+                  name = label,
+                  `type` = "bar",
+                  stack = "footprint",
+                  data = js.Array(behaviours.map { b =>
+                    (
+                      if (b == behaviour) footprint
+                      else 0.0
+                    ): js.Any
+                  }: _*)
+                )
+              }
+            }: _*
+          ),
+          color = js.Array("#f44336", "#009688", "#3f51b5", "#8bc34a", "#ffc107", "#795548")
         )
       chart.setOption(option)
     }

@@ -37,7 +37,8 @@ class OptionOpts(
   val xAxis: UndefOr[AxisOpts] = js.undefined,
   val yAxis: UndefOr[AxisOpts] = js.undefined,
   val series: UndefOr[js.Array[SeriesOpt]] = js.undefined,
-  val color: UndefOr[js.Array[String]] = js.undefined
+  val color: UndefOr[js.Array[String]] = js.undefined,
+  val tooltip: UndefOr[TooltipOpts] = js.undefined
 ) extends js.Object
 
 class TitleOpts(val text: UndefOr[String] = js.undefined) extends js.Object
@@ -50,7 +51,12 @@ class AxisOpts(
 class SeriesOpt(
   val name: UndefOr[String] = js.undefined,
   val `type`: String,
+  val stack: UndefOr[String] = js.undefined,
   val data: js.Array[js.Any]
+) extends js.Object
+
+class TooltipOpts(
+  val trigger: UndefOr[String] = js.undefined
 ) extends js.Object
 
 @js.native

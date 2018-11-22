@@ -24,16 +24,16 @@ object VideoStreaming extends Behaviour {
 
     val label: String = "video"
 
-    val footprint: Double = {
+    val footprint = {
       val minutesPerYear = duration.toMinutes * frequency * 52
       val bytes = quality.bytesForMinutes(minutesPerYear)
       val dataCenterEnergy = bytes * 7.20E-11
-      val energy =
-        device.energyForMinutes(minutesPerYear) +
-        dataCenterEnergy +
-        network.energyForBytes(bytes)
       // TODO Refine per world region
-      Region.World.ggeForEnergy(energy)
+      val region = Region.World
+      "Device" -> region.ggeForEnergy(device.energyForMinutes(minutesPerYear)) ::
+      "Data Center" -> region.ggeForEnergy(dataCenterEnergy) ::
+      "Network" -> region.ggeForEnergy(network.energyForBytes(bytes)) ::
+      Nil
     }
   }
 
@@ -64,8 +64,8 @@ object VideoStreaming extends Behaviour {
     def energyForBytes(bytes: Long): Double = bytes * energyPerByte
   }
   object Network {
-    case object FanWired extends Network(4.29E-10)
-    case object FanWiFi extends Network(1.52E-10)
+    case object Wired extends Network(4.29E-10)
+    case object WiFi extends Network(1.52E-10)
     case object Mobile extends Network(8.84E-10)
     implicit val values: Enum[Network] = Enum.derived
   }
@@ -84,7 +84,7 @@ object VideoStreaming extends Behaviour {
     5,
     Quality.`1080p`,
     Device.Laptop,
-    Network.FanWiFi
+    Network.WiFi
   )
 
   def view(model: Model): Html[Modify] =
