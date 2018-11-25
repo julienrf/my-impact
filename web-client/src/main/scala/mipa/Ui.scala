@@ -17,8 +17,8 @@ object Ui extends scalm.App {
 
   def init: (Model, Cmd[Msg]) = {
     val model = Model(
-      BehaviourAndModel.init(VideoStreaming) ::
-      BehaviourAndModel.init(Flying) ::
+      BehaviourAndModel.newInstance(VideoStreaming) ::
+      BehaviourAndModel.newInstance(Flying) ::
       Nil,
       None
     )
@@ -84,7 +84,7 @@ object Ui extends scalm.App {
         case Some(inner((behaviour, innerMsg))) =>
           val updated = behaviour.update(innerMsg)
           (model.copy(
-            behaviours = model.behaviours.map(bm => if (bm.behaviour == behaviour.behaviour /* Will not work if the same behaviour is compared several times */) updated else bm),
+            behaviours = model.behaviours.map(bm => if (bm.uuid == behaviour.uuid) updated else bm),
             selected = Some(updated)
           ), Cmd.Empty)
         case _ => (model, Cmd.Empty)

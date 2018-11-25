@@ -1,5 +1,7 @@
 package mipa
 
+import java.util.UUID
+
 import enum.Enum
 import org.scalajs.dom
 import org.scalajs.dom.raw.{HTMLInputElement, HTMLSelectElement}
@@ -71,13 +73,15 @@ trait BehaviourAndModel { outer =>
 
   def model: behaviour.Model
 
+  def uuid: UUID
+
   final def label: String = model.label
   final def footprint = model.footprint
 
   final def source: behaviour.Source = behaviour.source
 
   final def update(msg: BehaviourAndMsg { val behaviour: outer.behaviour.type }): BehaviourAndModel { val behaviour: outer.behaviour.type } =
-    BehaviourAndModel(behaviour)(msg.modify.f(model))
+    BehaviourAndModel(behaviour)(uuid, msg.modify.f(model))
 
   final def view: Html[BehaviourAndMsg { val behaviour: outer.behaviour.type }] =
     behaviour.view(model).map(BehaviourAndMsg(behaviour))
@@ -85,15 +89,16 @@ trait BehaviourAndModel { outer =>
 }
 
 object BehaviourAndModel {
-  def apply(_behaviour: Behaviour)(_model: _behaviour.Model): BehaviourAndModel { val behaviour: _behaviour.type } = {
+  def apply(_behaviour: Behaviour)(_uuid: UUID, _model: _behaviour.Model): BehaviourAndModel { val behaviour: _behaviour.type } = {
       new BehaviourAndModel {
         val behaviour: _behaviour.type = _behaviour
         def model = _model
+        def uuid = _uuid
       }
     }
 
-  def init(_behaviour: Behaviour): BehaviourAndModel { val behaviour: _behaviour.type } = {
-    BehaviourAndModel(_behaviour)(_behaviour.init)
+  def newInstance(_behaviour: Behaviour): BehaviourAndModel { val behaviour: _behaviour.type } = {
+    BehaviourAndModel(_behaviour)(UUID.randomUUID(), _behaviour.init)
   }
 }
 
