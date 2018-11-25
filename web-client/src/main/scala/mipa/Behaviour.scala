@@ -10,6 +10,8 @@ import scalm.Html._
 
 trait Behaviour {
 
+  def label: String
+
   case class Source(url: String, label: String)
 
   def source: Source
@@ -64,6 +66,15 @@ trait Behaviour {
       }: _*
     )
   }
+
+}
+
+object Behaviour {
+
+  val all: List[Behaviour] =
+    VideoStreaming ::
+    Flying ::
+    Nil
 
 }
 

@@ -27,7 +27,7 @@ class InitOpts(
 
 @js.native
 trait ECharts extends js.Object {
-  def setOption(option: OptionOpts): Unit = js.native
+  def setOption(option: OptionOpts, notMerge: UndefOr[Boolean] = js.undefined): Unit = js.native
   def on(eventName: String, handler: js.Function1[MouseEvent, Unit]): Unit = js.native
   def on(eventName: String, query: String | js.Object, handler: js.Function1[MouseEvent, Unit]): Unit = js.native
 }

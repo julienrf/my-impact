@@ -46,7 +46,7 @@ object Charts {
           ),
           color = js.Array("#f44336", "#009688", "#3f51b5", "#8bc34a", "#ffc107", "#795548")
         )
-      chart.setOption(option)
+      chart.setOption(option, notMerge = true)
     }
 
     def inserted(vnode: VNode): Unit = init(vnode)

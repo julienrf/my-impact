@@ -7,6 +7,8 @@ import scalm.Html._
 
 object Flying extends Behaviour {
 
+  val label = "Flying"
+
   val source = Source(
     "https://en.wikipedia.org/wiki/Environmental_impact_of_aviation",
     "Wikipedia"

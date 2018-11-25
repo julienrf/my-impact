@@ -9,6 +9,8 @@ import enum.Enum
 
 object VideoStreaming extends Behaviour {
 
+  val label = "Video Streaming"
+
   val source = Source(
     "https://theshiftproject.org/wp-content/uploads/2018/10/2018-10-04_Rapport_Pour-une-sobri%C3%A9t%C3%A9-num%C3%A9rique_Rapport_The-Shift-Project.pdf",
     "Rapport — Pour une sobriété numérique, The Shift Project"

@@ -1,24 +1,31 @@
 package mipa
 
-import scalm.{Cmd, Elem, Html, Sub}
+import scalm._
 import scalm.Html._
 
 object Ui extends scalm.App {
 
   case class Model(
+    showBehavioursSelect: Boolean,
     behaviours: List[BehaviourAndModel],
     selected: Option[BehaviourAndModel]
-  )
+  ) {
+    assert(selected.forall(b => behaviours.exists(_.uuid == b.uuid)))
+  }
 
   sealed trait Msg
+  case object Add extends Msg
+  case class AddInstance(behaviour: Behaviour) extends Msg
+  case class RemoveInstance(behaviour: BehaviourAndModel) extends Msg
   case class Select(behaviour: BehaviourAndModel) extends Msg
   case object Close extends Msg
   case class BehaviourMsg(inner: BehaviourAndMsg) extends Msg
 
   def init: (Model, Cmd[Msg]) = {
     val model = Model(
+      showBehavioursSelect = false,
       BehaviourAndModel.newInstance(VideoStreaming) ::
-      BehaviourAndModel.newInstance(Flying) ::
+//      BehaviourAndModel.newInstance(Flying) ::
       Nil,
       None
     )
@@ -34,8 +41,40 @@ object Ui extends scalm.App {
       ),
       tag("main")(attr("class", "container"))(
         div(attr("class", "row"))(
-          div(attr("class", "col s12"))(
-            Charts.echartsElem(model.behaviours)(Select)
+          div(attr("class", "col s12"), style(Style("position", "relative")))(
+            Charts.echartsElem(model.behaviours)(Select),
+            if (model.showBehavioursSelect) {
+              span()(
+                div(
+                  attr("class", "modal open"),
+                  style(Style("z-index", "1003"), Style("display", "block"), Style("opacity", "1"), Style("top", "10%"))
+                )(
+                  tag("div")(attr("class", "collection"))(
+                    Behaviour.all.map { behaviour =>
+                      tag("a")(
+                        attr("class", "collection-item waves-effect"),
+                        onClick(AddInstance(behaviour))
+                      )(
+                        text(behaviour.label)
+                      )
+                    }: _*
+                  )
+                ),
+                div(
+                  attr("class", "modal-overlay"),
+                  style(Style("z-index", "1002"), Style("opacity", "0.5"), Style("display", "block"))
+                )()
+              )
+            } else {
+              tag("a")(
+                attr("title", "Add a behaviour"),
+                attr("class", "btn-floating btn-large waves-effect waves-light red"),
+                style(Style("position", "absolute"), Style("right", "1em"), Style("top", "300px")),
+                onClick(Add)
+              )(
+                tag("i")(attr("class", "material-icons"))(text("add"))
+              )
+            }
           )
         ),
         model.selected match {
@@ -43,23 +82,26 @@ object Ui extends scalm.App {
           case Some(behaviour) =>
             div(attr("class", "row"))(
               div(attr("class", "col s12"))(
-                div(attr("class", "card"))(
-                  div(attr("class", "card-content"))(
-                    tag("p")()(
-                      behaviour.view.map(BehaviourMsg)
-                    ),
-                    tag("p")()(
-                      text("Source: "),
-                      tag("a")(
-                        attr("href", behaviour.source.url)
-                      )(text(behaviour.source.label))
-                    )
+                LnF.cardWithActions[Msg](
+                  tag("p")()(
+                    behaviour.view.map(BehaviourMsg)
                   ),
-                  div(attr("class", "ard-action"))(
+                  tag("p")()(
+                    text("Source: "),
                     tag("a")(
-                      attr("class", "waves-effect waves-teal btn-flat"),
-                      onClick(Close)
-                    )(text("Close"))
+                      attr("href", behaviour.source.url)
+                    )(text(behaviour.source.label))
+                  )
+                )(
+                  tag("a")(
+                    attr("class", "waves-effect waves-teal btn-flat"),
+                    onClick(Close)
+                  )(text("Close")),
+                  tag("a")(
+                    attr("class", "waves-effect btn red"),
+                    onClick(RemoveInstance(behaviour))
+                  )(
+                    tag("i")(attr("class", "material-icons"))(text("delete"))
                   )
                 )
               )
@@ -78,7 +120,26 @@ object Ui extends scalm.App {
     )
 
   def update(msg: Msg, model: Model): (Model, Cmd[Msg]) = msg match {
-    case Select(behaviour) => (model.copy(selected = Some(behaviour)), Cmd.Empty)
+    case Add => (model.copy(showBehavioursSelect = true), Cmd.Empty)
+    case AddInstance(behaviour) =>
+      val updatedModel =
+        model.copy(
+          showBehavioursSelect = false,
+          behaviours = model.behaviours :+ BehaviourAndModel.newInstance(behaviour)
+        )
+      (updatedModel, Cmd.Empty)
+    case RemoveInstance(behaviour) =>
+      val updatedModel =
+        model.copy(
+          behaviours = model.behaviours.filter(_.uuid != behaviour.uuid),
+          selected = None
+        )
+      (updatedModel, Cmd.Empty)
+    case Select(behaviour) =>
+      if (model.behaviours.exists(_.uuid == behaviour.uuid))
+        (model.copy(selected = Some(behaviour)), Cmd.Empty)
+      else
+        (model, Cmd.Empty)
     case BehaviourMsg(inner) =>
       model.selected match {
         case Some(inner((behaviour, innerMsg))) =>

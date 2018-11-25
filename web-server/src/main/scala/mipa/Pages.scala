@@ -22,6 +22,7 @@ trait Pages { webEndpoints: WebEndpoints =>
                 <head>
                   <title>My Impact</title>
                   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
                   ${
                     sjsResources.map { lib =>
                       html"""<script defer type="text/javascript" src="${assets.call(asset(lib))}"></script>"""
