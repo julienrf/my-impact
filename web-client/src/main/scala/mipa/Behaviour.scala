@@ -5,7 +5,7 @@ import java.util.UUID
 import enum.Enum
 import org.scalajs.dom
 import org.scalajs.dom.raw.{HTMLInputElement, HTMLSelectElement}
-import scalm.{Html, Style}
+import scalm.{Html, Prop, Style}
 import scalm.Html._
 
 trait Behaviour {
@@ -35,8 +35,8 @@ trait Behaviour {
 
   final def numberField(value: String, maxWidth: Int = 3)(f: Int => Model => Model): Html[Modify] =
     input(
-      attr("type", "number"),
-      attr("value", value),
+      Prop("type", "number"),
+      Prop("value", value),
       style(Style("max-width", s"${maxWidth}rem"), Style("font-weight", "bold")),
       onEvent("change", { e: dom.Event =>
         val stringValue = e.target.asInstanceOf[HTMLInputElement].value
