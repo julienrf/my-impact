@@ -16,6 +16,8 @@ object module extends js.Object {
     opts: UndefOr[InitOpts] = js.undefined
   ): ECharts = js.native
 
+  def getInstanceByDom(dom: HTMLDivElement | HTMLCanvasElement): UndefOr[ECharts] = js.native
+
 }
 
 class InitOpts(
@@ -30,6 +32,7 @@ trait ECharts extends js.Object {
   def setOption(option: OptionOpts, notMerge: UndefOr[Boolean] = js.undefined): Unit = js.native
   def on(eventName: String, handler: js.Function1[MouseEvent, Unit]): Unit = js.native
   def on(eventName: String, query: String | js.Object, handler: js.Function1[MouseEvent, Unit]): Unit = js.native
+  def off(eventName: String, handler: UndefOr[js.Function1[MouseEvent, Unit]] = js.undefined): Unit = js.native
 }
 
 class OptionOpts(

@@ -12,9 +12,10 @@ object Charts {
 
   def echartsElem[Msg](behaviours: List[BehaviourAndModel])(select: BehaviourAndModel => Msg) = Hook[Msg](dispatch => {
 
-    def init(vNode: VNode): Unit = {
+    def initOrUpdate(vNode: VNode): Unit = {
       val el = vNode.elm.asInstanceOf[HTMLDivElement]
-      val chart = echarts.module.init(el)
+      val chart = echarts.module.getInstanceByDom(el).getOrElse(echarts.module.init(el))
+      chart.off("click")
       chart.on("click", e => {
         // TODO error reporting
         behaviours.lift(e.dataIndex).foreach { behaviour =>
@@ -49,8 +50,8 @@ object Charts {
       chart.setOption(option, notMerge = true)
     }
 
-    def inserted(vnode: VNode): Unit = init(vnode)
-    def replaced(old: VNode, vnode: VNode): Unit = init(vnode)
+    def inserted(vnode: VNode): Unit = initOrUpdate(vnode)
+    def replaced(old: VNode, vnode: VNode): Unit = initOrUpdate(vnode)
 
     snabbdom.h("div", js.Dynamic.literal(
       attrs = js.Dynamic.literal(style = "width: 100%; height: 600px;"),

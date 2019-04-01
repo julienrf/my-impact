@@ -14,7 +14,7 @@ object Ui extends scalm.App {
   }
 
   sealed trait Msg
-  case object Add extends Msg
+  case object ListBehaviours extends Msg
   case class AddInstance(behaviour: Behaviour) extends Msg
   case class RemoveInstance(behaviour: BehaviourAndModel) extends Msg
   case class Select(behaviour: BehaviourAndModel) extends Msg
@@ -70,7 +70,7 @@ object Ui extends scalm.App {
                 attr("title", "Add a behaviour"),
                 attr("class", "btn-floating btn-large waves-effect waves-light red"),
                 style(Style("position", "absolute"), Style("right", "1em"), Style("top", "300px")),
-                onClick(Add)
+                onClick(ListBehaviours)
               )(
                 tag("i")(attr("class", "material-icons"))(text("add"))
               )
@@ -120,12 +120,14 @@ object Ui extends scalm.App {
     )
 
   def update(msg: Msg, model: Model): (Model, Cmd[Msg]) = msg match {
-    case Add => (model.copy(showBehavioursSelect = true), Cmd.Empty)
+    case ListBehaviours => (model.copy(showBehavioursSelect = true), Cmd.Empty)
     case AddInstance(behaviour) =>
+      val instance = BehaviourAndModel.newInstance(behaviour)
       val updatedModel =
         model.copy(
           showBehavioursSelect = false,
-          behaviours = model.behaviours :+ BehaviourAndModel.newInstance(behaviour)
+          behaviours = model.behaviours :+ instance,
+          selected = Some(instance)
         )
       (updatedModel, Cmd.Empty)
     case RemoveInstance(behaviour) =>
