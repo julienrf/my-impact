@@ -58,8 +58,8 @@ trait Behaviour {
       enumeration.values.to[Seq].map { v =>
         val label = enumeration.encode(v)
         tag("option")(
-          attr("value", label),
-          cond(v == value)(attr("selected", "selected"))
+          Prop("value", label),
+          cond(v == value)(Prop("selected", "true"))
         )(
           text(label)
         )
