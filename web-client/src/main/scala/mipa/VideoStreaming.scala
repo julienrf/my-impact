@@ -66,8 +66,7 @@ object VideoStreaming extends Behaviour {
     def energyForBytes(bytes: Long): Double = bytes * energyPerByte
   }
   object Network {
-    case object Wired extends Network(4.29E-10)
-    case object WiFi extends Network(1.52E-10)
+    case object Fixed extends Network((4.29E-10 /* Wired */ + 1.52E-10 /* WiFi */) / 2)
     case object Mobile extends Network(8.84E-10)
     implicit val values: Enum[Network] = Enum.derived
   }
@@ -86,7 +85,7 @@ object VideoStreaming extends Behaviour {
     5,
     Quality.`1080p`,
     Device.Laptop,
-    Network.WiFi
+    Network.Fixed
   )
 
   def view(model: Model): Html[Modify] =
