@@ -3,7 +3,7 @@ import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 val endpointsVersion = "0.7.0"
 
 val commonSettings = Seq(
-  scalaVersion := "2.12.7"
+  scalaVersion := "2.12.8"
 )
 
 val shared =

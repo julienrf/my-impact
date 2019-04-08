@@ -10,7 +10,7 @@ import scala.scalajs.js
 
 object Charts {
 
-  def echartsElem[Msg](behaviours: List[BehaviourAndModel])(select: BehaviourAndModel => Msg) = Hook[Msg](dispatch => {
+  def echartsElem[Msg](behaviours: List[BehaviorAndModel])(select: BehaviorAndModel => Msg) = Hook[Msg](dispatch => {
 
     def initOrUpdate(vNode: VNode): Unit = {
       val el = vNode.elm.asInstanceOf[HTMLDivElement]

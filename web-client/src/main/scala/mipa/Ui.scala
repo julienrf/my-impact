@@ -7,24 +7,24 @@ object Ui extends scalm.App {
 
   case class Model(
     showBehavioursSelect: Boolean,
-    behaviours: List[BehaviourAndModel],
-    selected: Option[BehaviourAndModel]
+    behaviours: List[BehaviorAndModel],
+    selected: Option[BehaviorAndModel]
   ) {
     assert(selected.forall(b => behaviours.exists(_.uuid == b.uuid)))
   }
 
   sealed trait Msg
   case object ListBehaviours extends Msg
-  case class AddInstance(behaviour: Behaviour) extends Msg
-  case class RemoveInstance(behaviour: BehaviourAndModel) extends Msg
-  case class Select(behaviour: BehaviourAndModel) extends Msg
+  case class AddInstance(behaviour: Behavior) extends Msg
+  case class RemoveInstance(behaviour: BehaviorAndModel) extends Msg
+  case class Select(behaviour: BehaviorAndModel) extends Msg
   case object Close extends Msg
-  case class BehaviourMsg(inner: BehaviourAndMsg) extends Msg
+  case class BehaviourMsg(inner: BehaviorAndMsg) extends Msg
 
   def init: (Model, Cmd[Msg]) = {
     val model = Model(
       showBehavioursSelect = false,
-      BehaviourAndModel.newInstance(VideoStreaming) ::
+      BehaviorAndModel.newInstance(VideoStreaming) ::
 //      BehaviourAndModel.newInstance(Flying) ::
       Nil,
       None
@@ -50,7 +50,7 @@ object Ui extends scalm.App {
                   style(Style("z-index", "1003"), Style("display", "block"), Style("opacity", "1"), Style("top", "10%"))
                 )(
                   tag("div")(attr("class", "collection"))(
-                    Behaviour.all.map { behaviour =>
+                    Behavior.all.map { behaviour =>
                       tag("a")(
                         attr("class", "collection-item waves-effect"),
                         onClick(AddInstance(behaviour))
@@ -122,7 +122,7 @@ object Ui extends scalm.App {
   def update(msg: Msg, model: Model): (Model, Cmd[Msg]) = msg match {
     case ListBehaviours => (model.copy(showBehavioursSelect = true), Cmd.Empty)
     case AddInstance(behaviour) =>
-      val instance = BehaviourAndModel.newInstance(behaviour)
+      val instance = BehaviorAndModel.newInstance(behaviour)
       val updatedModel =
         model.copy(
           showBehavioursSelect = false,

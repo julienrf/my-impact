@@ -4,10 +4,10 @@ import scalm.Html
 import scalm.Html._
 
 import scala.concurrent.duration.FiniteDuration
-import scala.concurrent.duration.DurationInt
+import scala.concurrent.duration.DurationLong
 import enum.Enum
 
-object VideoStreaming extends Behaviour {
+object VideoStreaming extends Behavior {
 
   val label = "Video Streaming"
 
@@ -38,6 +38,12 @@ object VideoStreaming extends Behaviour {
       Nil
     }
   }
+
+  val durationField  = field[Long](_.duration.toMinutes, d => _.copy(duration = d.minutes))
+  val frequencyField = field[Int](_.frequency, f => _.copy(frequency = f))
+  val qualityField   = field[Quality](_.quality, q => _.copy(quality = q))
+  val deviceField    = field[Device](_.device, d => _.copy(device = d))
+  val networkField   = field[Network](_.network, n => _.copy(network = n))
 
   // Bitrate values have been taken from this article:
   // https://teradek.com/blogs/articles/what-is-the-optimal-bitrate-for-your-resolution
@@ -88,18 +94,18 @@ object VideoStreaming extends Behaviour {
     Network.Fixed
   )
 
-  def view(model: Model): Html[Modify] =
+  def view(form: Form): Html[Update] =
     div()(
       text("Watching an online video of "),
-      numberField(model.duration.toMinutes.toString)(n => _.copy(duration = n.minutes)),
+      form.number(durationField),
       text(" minutes, "),
-      numberField(model.frequency.toString)(n => _.copy(frequency = n)),
+      form.number(frequencyField),
       text(s" times a week, in "),
-      enumField(model.quality)(q => _.copy(quality = q)),
+      form.enum(qualityField),
       text(", from a "),
-      enumField(model.device)(d => _.copy(device = d)),
+      form.enum(deviceField),
       text(", with a "),
-      enumField(model.network)(n => _.copy(network = n)),
+      form.enum(networkField),
       text(" connection.")
     )
 
