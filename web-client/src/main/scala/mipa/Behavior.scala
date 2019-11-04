@@ -20,7 +20,7 @@ trait Behavior {
 
   trait ModelTemplate {
     def label: String
-    def footprint: List[(String, Double)]
+    def footprint: List[(String, Double /* kg (CO₂ eq) / year */)]
   }
 
   final case class Update(f: Model => Model)
@@ -59,7 +59,7 @@ trait Behavior {
             .fold(_ => Update(identity), value => Update(field.set(value)))
         })
       )(
-        enumeration.values.to[Seq].map { v =>
+        enumeration.values.to[Seq].sortBy(enumeration.encode).map { v =>
           val label = enumeration.encode(v)
           tag("option")(
             Prop("value", label),
@@ -80,6 +80,7 @@ object Behavior {
   val all: List[Behavior] =
     VideoStreaming ::
     Flying ::
+    Car ::
     Nil
 
 }

@@ -26,7 +26,7 @@ object Flying extends Behavior {
   val distanceField  = field[Int](_.distance, d => _.copy(distance = d))
   val frequencyField = field[Int](_.frequency, f => _.copy(frequency = f))
 
-  def init = Model(500, 1)
+  def init = Model(6000, 1)
 
   def view(form: Form): Html[Update] =
     div()(

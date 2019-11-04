@@ -24,7 +24,7 @@ val client =
       scalaJSLinkerConfig in (Compile, fullOptJS) ~= { _.withClosureCompiler(false) },
       emitSourceMaps := false,
       libraryDependencies ++= Seq(
-        "org.julienrf" %%% "scalm" % "1.0.0-RC1+7-ff1789ba+20181028-2149",
+        "org.julienrf" %%% "scalm" % "1.0.0-RC1+7-ff1789ba+20191104-1811",
         "org.julienrf" %%% "endpoints-xhr-client-faithful" % endpointsVersion,
         "org.julienrf" %%% "enum" % "3.1"
       ),
