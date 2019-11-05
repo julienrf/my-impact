@@ -26,7 +26,8 @@ val client =
       libraryDependencies ++= Seq(
         "org.julienrf" %%% "scalm" % "1.0.0-RC1+7-ff1789ba+20191104-1811",
         "org.julienrf" %%% "endpoints-xhr-client-faithful" % endpointsVersion,
-        "org.julienrf" %%% "enum" % "3.1"
+        "org.julienrf" %%% "enum" % "3.1",
+        "org.typelevel" %%% "squants"  % "1.3.0"
       ),
       version in webpack := "4.23.1",
       npmDependencies in Compile ++= Seq(

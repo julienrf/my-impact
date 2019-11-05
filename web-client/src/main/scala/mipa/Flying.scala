@@ -2,6 +2,9 @@ package mipa
 
 import scalm.Html
 import scalm.Html._
+import squants.motion.Distance
+import squants.space.Kilometers
+import squants.time.Frequency
 
 object Flying extends Behavior {
 
@@ -13,20 +16,22 @@ object Flying extends Behavior {
   )
 
   case class Model(
-    distance: Int /* km */,
-    frequency: Int /* per year */
+    distance: Distance,
+    frequency: Frequency
   ) extends ModelTemplate {
 
     val label: String = "flight"
 
-    val footprint =
-      "Fuel consumption" -> (frequency * 259 * distance / 1000.0) :: Nil
+    val footprint = {
+      val gge = GramsPerKilometer(150 /* very approximate... */) * distance * frequency
+      ("Fuel consumption" -> gge) :: Nil
+    }
   }
 
-  val distanceField  = field[Int](_.distance, d => _.copy(distance = d))
-  val frequencyField = field[Int](_.frequency, f => _.copy(frequency = f))
+  val distanceField  = field[Int](_.distance.to(Kilometers).toInt, d => _.copy(distance = Kilometers(d)))
+  val frequencyField = field[Int](_.frequency.to(Yearly).toInt, f => _.copy(frequency = Yearly(f)))
 
-  def init = Model(6000, 1)
+  def init = Model(Kilometers(6000), Yearly(1))
 
   def view(form: Form): Html[Update] =
     div()(

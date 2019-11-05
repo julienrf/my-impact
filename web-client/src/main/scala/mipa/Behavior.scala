@@ -7,6 +7,7 @@ import org.scalajs.dom
 import org.scalajs.dom.raw.{HTMLInputElement, HTMLSelectElement}
 import scalm.{Html, Prop, Style}
 import scalm.Html._
+import squants.motion.MassFlow
 
 trait Behavior {
 
@@ -20,7 +21,7 @@ trait Behavior {
 
   trait ModelTemplate {
     def label: String
-    def footprint: List[(String, Double /* kg (CO₂ eq) / year */)]
+    def footprint: List[(String, MassFlow /* kg (CO₂ eq) / year */)]
   }
 
   final case class Update(f: Model => Model)

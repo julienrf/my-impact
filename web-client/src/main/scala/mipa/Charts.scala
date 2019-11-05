@@ -37,7 +37,7 @@ object Charts {
                   stack = "footprint",
                   data = js.Array(behaviours.map { b =>
                     (
-                      if (b == behaviour) footprint
+                      if (b == behaviour) footprint.to(KilogramsPerYear)
                       else 0.0
                     ): js.Any
                   }: _*)
