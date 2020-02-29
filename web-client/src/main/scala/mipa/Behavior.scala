@@ -82,6 +82,7 @@ object Behavior {
     VideoStreaming ::
     Flying ::
     Car ::
+    Eating ::
     Nil
 
 }
